@@ -46,6 +46,7 @@ flags.DEFINE_string("video_level_classifier_model", "MoeModel",
                     "classifier layer")
 flags.DEFINE_integer("lstm_cells", 1024, "Number of LSTM cells.")
 flags.DEFINE_integer("lstm_layers", 2, "Number of LSTM layers.")
+flags.DEFINE_integer("lstm_depth", 20, "Size of input sequence.")
 
 class FrameLevelLogisticModel(models.BaseModel):
 
@@ -213,6 +214,16 @@ class LstmModel(models.BaseModel):
     """
     lstm_size = FLAGS.lstm_cells
     number_of_layers = FLAGS.lstm_layers
+
+    number_of_sequence_frames = FLAGS.lstm_depth
+    random_frames = FLAGS.sample_random_frames
+    num_frames = tf.cast(tf.expand_dims(num_frames, 1), tf.float32)
+    if random_frames:
+      model_input = utils.SampleRandomFrames(model_input, num_frames,
+                                             number_of_sequence_frames)
+    else:
+      model_input = utils.SampleRandomSequence(model_input, num_frames,
+                                               number_of_sequence_frames)
 
     ## Batch normalize the input
     stacked_lstm = tf.contrib.rnn.MultiRNNCell(
