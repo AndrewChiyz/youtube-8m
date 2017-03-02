@@ -217,12 +217,12 @@ class LstmModel(models.BaseModel):
 
     number_of_sequence_frames = FLAGS.lstm_depth
     random_frames = FLAGS.sample_random_frames
-    num_frames = tf.cast(tf.expand_dims(num_frames, 1), tf.float32)
+    num_fs = tf.cast(tf.expand_dims(num_frames, 1), tf.float32)
     if random_frames:
-      model_input = utils.SampleRandomFrames(model_input, num_frames,
+      model_input = utils.SampleRandomFrames(model_input, num_fs,
                                              number_of_sequence_frames)
     else:
-      model_input = utils.SampleRandomSequence(model_input, num_frames,
+      model_input = utils.SampleRandomSequence(model_input, num_fs,
                                                number_of_sequence_frames)
 
     ## Batch normalize the input
